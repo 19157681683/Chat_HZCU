@@ -53,7 +53,7 @@
 
       - 管理员：
 
-        ![]()
+        ![管理员](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E7%AE%A1%E7%90%86%E5%91%98.png)
 
 
 ---
