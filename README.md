@@ -47,31 +47,12 @@
 ## 4. 基本技术栈：
 
 1. 系统：前端Streamlit（后期换Vue/React），后端SSM+SpringBoot
+
 2. 模型：LangChain，ElasticsSearch，增量预训练/指令微调，Agent，模型部署
 
+   
 
-
-## 5. 现阶段情况：
-
-   1. 前后端系统已经完成，可以链接访问，可以直接点击**游客登录**：
-
-      - 用户：http://106.12.19.123:8501/
-
-      - 管理员：http://106.12.19.123:8502/
-
-   2. 整体效果如下：
-
-      - 用户：
-
-        ![用户](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E7%94%A8%E6%88%B7.png)
-
-      - 管理员：
-
-        ![管理员](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E7%AE%A1%E7%90%86%E5%91%98.png)
-
-
-
-## 6. 后续工作：
+## 5. 后续工作：
 
 1. 主体就是围绕用户和管理员的对话API，利用大模型应用和微调技术处理，大致方向如下，大家选自己喜欢的一个就ok，放大看更清晰：
    
