@@ -6,6 +6,8 @@
 
 
 
+
+
 ## 2. 核心功能：
 
 #### 用户对话API：
@@ -22,12 +24,16 @@
 
 1. 管理员通过对话，系统可以生成对应SQL，执行SQL，展示对应的Echarts图表
 
+    
+   
    
 
 ## 2. 基本技术栈：
 
 1. 系统：前端Streamlit（后期换Vue/React），后端SSM+SpringBoot
 2. 模型：LangChain，ElasticsSearch，增量预训练/指令微调，Agent，模型部署
+
+
 
 
 
@@ -39,9 +45,11 @@
 
       - 管理员：http://106.12.19.123:8502/
 
-   	2. 整体效果如下视频：
+   2. 整体效果如下视频：
 
-![视频](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91.mp4)
+   3. ![视频](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91.mp4)
+
+
 
 
 
