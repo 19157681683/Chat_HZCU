@@ -1,7 +1,7 @@
 # Chat_HZCU
 ## 1. 现阶段情况：
 
-   1. 前后端系统已经完成，可以链接访问，可以直接点击**游客登录**：
+   1. 前后端系统已经完成，可以点击下方链接访问，可以直接点击**游客登录** 免注册登录：
 
       - 用户：http://106.12.19.123:8501/
 
@@ -48,7 +48,7 @@
 
 1. 系统：前端Streamlit（后期换Vue/React），后端SSM+SpringBoot
 
-2. 模型：LangChain，ElasticsSearch，增量预训练/指令微调，Agent，模型部署
+2. 模型：LangChain，ElasticSearch，增量预训练/指令微调，Agent，模型部署
 
    
 
