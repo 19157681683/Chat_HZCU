@@ -58,4 +58,5 @@
 ## 6. 进度：
 
 - 第1周：2024-03-24：系统整体任务和各小组长技术分析【8人】
-  - ![第一次小组会议](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%8F%E7%BB%84%E4%BC%9A%E8%AE%AE.png)
+  
+  ![第一次小组会议](https://github.com/19157681683/Chat_HZCU/blob/main/resource/%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%8F%E7%BB%84%E4%BC%9A%E8%AE%AE.png)
