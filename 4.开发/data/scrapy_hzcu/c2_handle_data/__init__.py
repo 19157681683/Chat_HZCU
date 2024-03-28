@@ -37,13 +37,13 @@ def text_from_html(html_content, ignore_links=False, ignore_images=False):
     text_content = processor.handle(html_content)
     return text_content
 
-# 3. 提取文本信息，删除所有英文字符。不包括标点和换行符
+# 3. 提取文本信息，删除所有英文字符。不包括标点和换行符，数字
 def remove_english_characters_preserve_punctuation(text):
-    # 正则表达式匹配所有英文字符，但不包括指定的标点和换行符
-    pattern = re.compile(r'[^\u4e00-\u9fa5，。\n\r\t]')
-    # 替换所有匹配的英文字符为空字符串
-    cleaned_text = pattern.sub('', text)
-    return cleaned_text
+    pattern = r'[a-zA-Z/\[\]|!*\-]'
+    return re.sub(pattern, '', text)
+
+
+
 
 # 4.1 让模型提取文本标题
 def title_from_model(company_model_type, text_content):
@@ -72,7 +72,7 @@ def url_from_model(company_model_type, text_content):
     user_input = f"""
     角色：你是一位专业的数据处理工程师
     目标：你当前的任务是从下面文本中捕获对应的需要超链接url对应的名词，并附带上对应的url
-    注意：url首位统一添加 http://www.hzcu.edu.cn
+    注意：url首位统一添加 http://www.hzcu.edu.cn，结尾必须按照.html结尾
     输出格式：其中，下面的数据格式为字典/json格式，其中key为需要捕获的名词，value为对应的url
     ```
     "教学科研机构":"http://www.hzcu.edu.cn/col/col129/index.html"
@@ -99,8 +99,8 @@ def image_from_model(company_model_type, text_content):
     user_input = f"""
     角色：你是一位专业的数据处理工程师
     目标：你当前的任务是从下面文本中捕获对应的图片url对应的名词，并附带上对应的url，一般结尾是png,jpg等图片格式
-    注意：url首位统一添加 http://www.hzcu.edu.cn，不需要html结尾的，不要gif文件
-    输出格式：其中，下面的数据格式为字典/json格式，其中key为需要捕获的名词，value为对应的url
+    注意：url首位统一添加 http://www.hzcu.edu.cn，不需要.html结尾的，不要.gif结尾的文件
+    输出格式：其中，下面的数据格式为字典/json格式，其中key为需要捕获的名词，value为对应的url。请确保输出为JSON格式
     ```
     "浙大城市学院":"http://www.hzcu.edu.cn/picture/0/1803201327374572255.png"
     "... : ..."
@@ -126,9 +126,39 @@ def image_from_model(company_model_type, text_content):
 # 模型提取其他链接
 
 
+# 模型提取文本的问答对
+def qa_from_model(company_model_type, text_content):
+    # 获得url提示词
+    user_input = f"""
+    角色：你是一位专业的数据处理工程师
+    目标：你当前的任务是从下面文本中捕获对应的问答对,即是Json格式
+    注意：不要超过10个问答对。在确定输出之前，请检查当前输入是否符合原文。对于问题，必须给出确定的数字作为答案，不要使用大概，余等词。
+    输出格式：其中，下面的数据格式为字典/json格式，其中key为需要捕获的问题，value为对应的答案。请确保输出为JSON格式，只需要1级json就可，不需要多级。
+    ```
+    "浙大城市学院是什么时候创建的?": "1999年"
+    "浙大城市学院的校园面积是多少?": "校舍面积51万余平方米",
+    ```
+    输入数据：
+    {text_content}
+    """
+    # 整体message
+    messages = [
+        {"role": "system",
+         "content": "你是人工智能助手，你更擅长中文和英文的对话。你会为听从用户的指令，用户提供有帮助，准确的回答。"},
+        {"role": "user", "content": user_input}
+    ]
+    # 调用模型
+    vendor, model, api_key = get_vender_info(company_model_type)
+    model_response = chat_model_response(vendor, api_key, model, messages)
+    return model_response
+
+
 
 # 5. 从模型的响应中提取Json数据： 去掉```json
 def json_from_model_response(model_response):
+    # 如果模型响应为空，则返回空字典
+    if model_response is None:
+        return {}
     # 去除字符串开头和结尾的特定字符
     cleaned_json_str = "{" + model_response.split('{')[1].split("}")[0] + "}"
     json_data = json.loads(cleaned_json_str)

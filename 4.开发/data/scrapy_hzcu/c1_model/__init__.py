@@ -20,7 +20,7 @@ import streamlit as st
 zhipuai_api_key = "7545d65cf0e9b47f341f9cfa83d51f2c.msYqbjw8gUHbVf4R"
 
 # OpenAI的API Key
-openai_api_key = "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"
+openai_api_key = "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"
 
 # 阿里巴巴的API Key
 qwen_api_key = "sk-229f1bbff5c24b1d9e08c3b90a728bb9"
