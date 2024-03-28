@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80030
 File Encoding         : 65001
 
-Date: 2024-03-26 18:02:01
+Date: 2024-03-28 14:29:53
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,7 +27,24 @@ CREATE TABLE `other_link` (
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Table structure for test
+-- ----------------------------
+DROP TABLE IF EXISTS `test`;
+CREATE TABLE `test` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `object` varchar(255) NOT NULL,
+  `domain` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `question` text,
+  `answer` text,
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Table structure for website
@@ -42,7 +59,7 @@ CREATE TABLE `website` (
   `create_time` timestamp NULL DEFAULT NULL,
   `update_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Table structure for website_other_link_relation
@@ -57,7 +74,7 @@ CREATE TABLE `website_other_link_relation` (
   KEY `other_link_id` (`other_link_id`),
   CONSTRAINT `website_other_link_relation_ibfk_1` FOREIGN KEY (`website_id`) REFERENCES `website` (`id`),
   CONSTRAINT `website_other_link_relation_ibfk_2` FOREIGN KEY (`other_link_id`) REFERENCES `other_link` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Table structure for website_website_relation
@@ -72,4 +89,4 @@ CREATE TABLE `website_website_relation` (
   KEY `target_website_id` (`target_website_id`),
   CONSTRAINT `website_website_relation_ibfk_1` FOREIGN KEY (`source_website_id`) REFERENCES `website` (`id`),
   CONSTRAINT `website_website_relation_ibfk_2` FOREIGN KEY (`target_website_id`) REFERENCES `website` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
