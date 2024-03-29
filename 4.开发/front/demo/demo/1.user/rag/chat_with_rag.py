@@ -5,6 +5,7 @@
 @email = lixiuqixiaoke@qq.com
 @create_time = 2024/3/29 17：51
 
+@description = 与RAG模型交互
 """
 from typing import Optional
 

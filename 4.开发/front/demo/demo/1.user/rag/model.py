@@ -1,3 +1,12 @@
+# encoding: UTF-8
+"""
+
+@author = 李秀奇
+@email = lixiuqixiaoke@qq.com
+@create_time = 2024/3/29 17：51
+
+@description = 用于定义RAG模型的输入参数
+"""
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, List, Any
 

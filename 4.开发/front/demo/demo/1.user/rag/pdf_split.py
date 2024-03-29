@@ -5,6 +5,7 @@
 @email = lixiuqixiaoke@qq.com
 @create_time = 2024/3/29 17：51
 
+@description = PDF文件分割
 """
 from typing import Tuple, Generator, Dict, Any
 from langchain.docstore.document import Document
