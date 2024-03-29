@@ -1,3 +1,11 @@
+# encoding: UTF-8
+"""
+
+@author = 李秀奇
+@email = lixiuqixiaoke@qq.com
+@create_time = 2024/3/29 17：51
+
+"""
 from typing import Tuple, Generator, Dict, Any
 from langchain.docstore.document import Document
 from langchain_text_splitters import CharacterTextSplitter
