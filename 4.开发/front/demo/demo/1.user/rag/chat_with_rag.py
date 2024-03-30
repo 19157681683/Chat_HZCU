@@ -7,6 +7,8 @@
 
 @description: 与RAG模型交互
 """
+import typing
+
 from langchain_community.chat_message_histories.in_memory import ChatMessageHistory
 from langchain_community.chat_models.ollama import ChatOllama
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -59,15 +61,15 @@ class ChatWithRAG:
             vector_model: VectorModel,
             chat_with_rag_config: ChatWithRAGModelConfiguration,
     ):
-        self.host = chat_with_rag_config.vector_db_config.host
-        self.port = chat_with_rag_config.vector_db_config.port
-        self.llm = chat_model.llm
-        self.embeddings = vector_model.embeddings
-        self.vector_db_config = chat_with_rag_config.vector_db_config
-        self.retriever = vector_model.retriever
-        self.store = {}
+        self.config = chat_with_rag_config
+        self.chat_model = chat_model
+        self.vector_model = vector_model
+        self.message_store = {}
 
-    def single_chat_with_rag(self, query: str) -> dict:
+    def _get_host_and_port(self) -> typing.Tuple[str, str]:
+        return self.config.vector_db_config.host, self.config.vector_db_config.port
+
+    def _build_single_query_rag_chain(self, query: str) -> dict:
         context_template = """请使用以下上下文来回答最后的问题。
         如果你不知道答案，请说“我不知道”，不要尝试编造答案。
         最多使用三句话，并尽量简洁地回答。
@@ -78,20 +80,20 @@ class ChatWithRAG:
 
         有帮助的中文答案："""
 
-        custom_rag_prompt = PromptTemplate.from_template(context_template)
         formatter = lambda docs: "\n\n".join(doc.page_content for doc in docs)
+        custom_rag_prompt = PromptTemplate.from_template(context_template)
 
         rag_chain = (
-                {"context": self.retriever | formatter, "question": RunnablePassthrough()}
+                {"context": self.vector_model.retriever | formatter, "question": RunnablePassthrough()}
                 | custom_rag_prompt
-                | self.llm
+                | self.chat_model.llm
                 | StrOutputParser()
         )
 
         response = rag_chain.invoke(query)
         return response
 
-    def _create_history_aware_retriever(self):
+    def _create_history_aware_retriever(self) -> object:
         contextualize_q_system_prompt = """根据聊天历史和最新的用户问题，
                 用户可能引用了聊天历史中的上下文，构造了一个无需查看聊天历史也能理解的问题。
                 请勿直接作答，仅在必要时重构问题，否则原样返回。"""
@@ -104,17 +106,14 @@ class ChatWithRAG:
             ]
         )
 
-        history_aware_retriever = create_history_aware_retriever(
-            self.llm, self.retriever, contextualize_q_prompt
-        )
-        return history_aware_retriever
+        return create_history_aware_retriever(self.chat_model.llm, self.vector_model.retriever, contextualize_q_prompt)
 
-    def get_session_history(self, session_id: str) -> BaseChatMessageHistory:
-        if session_id not in self.store:
-            self.store[session_id] = ChatMessageHistory()
-        return self.store[session_id]
+    def _get_or_create_session_history(self, session_id: str) -> BaseChatMessageHistory:
+        if session_id not in self.message_store:
+            self.message_store[session_id] = ChatMessageHistory()
+        return self.message_store[session_id]
 
-    def have_history_rag(self, query: str):
+    def process_conversational_rag(self, query: str, session_id: str) -> str:
         history_aware_retriever = self._create_history_aware_retriever()
 
         qa_system_prompt = """你是一个问答任务的助手。
@@ -132,64 +131,60 @@ class ChatWithRAG:
             ]
         )
 
-        question_answer_chain = create_stuff_documents_chain(self.llm, qa_prompt)
-        rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+        question_answer_chain = create_stuff_documents_chain(self.chat_model.llm, qa_prompt)
+        retrieval_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 
         conversational_rag_chain = RunnableWithMessageHistory(
-            rag_chain,
-            self.get_session_history,
+            retrieval_chain,
+            self._get_or_create_session_history,
             input_messages_key="input",
             history_messages_key="chat_history",
             output_messages_key="answer",
         )
-        response = conversational_rag_chain.invoke(
-            {"input": query},
-            config={
-                "configurable": {"session_id": "xiaoke_test1"}
-            },  # constructs a key "abc123" in `store`.
-        )["answer"]
-        return response
+
+        response = conversational_rag_chain.invoke({"input": query}, {"configurable": {"session_id": session_id}})
+        return response["answer"]
 
 
-class CreateChatWithRAG:
-    def __init__(self, chat_model: ChatModel, vector_model: VectorModel,
-                 chat_with_rag_config: ChatWithRAGModelConfiguration):
-        self.chat_model = chat_model
-        self.vector_model = vector_model
-        self.chat_with_rag_config = chat_with_rag_config
+class ChatWithRAGFactory:
+    def __init__(
+            self,
+            chat_model_name: str,
+            embedding_model_name: str,
+            search_method: str,
+            nearest_neighbors_count: int,
+    ):
+        chat_model_config = ChatModelSettings(model_path=chat_model_name)
+        chat_model = ChatModel(model_config=chat_model_config)
+
+        vector_db_config = VectorDatabaseConfig(embedding_model_path=embedding_model_name)
+        search_type = SearchParameters(search_method=search_method, nearest_neighbors_count=nearest_neighbors_count)
+        vector_model = VectorModel(vector_db_config, search_type)
+        rag_config = ChatWithRAGModelConfiguration(search_config=search_type, vector_db_config=vector_db_config)
+
+        self.chat_with_rag = ChatWithRAG(chat_model, vector_model, rag_config)
 
     def create_chat_with_rag(self) -> ChatWithRAG:
-        return ChatWithRAG(
-            chat_model=self.chat_model,
-            vector_model=self.vector_model,
-            chat_with_rag_config=self.chat_with_rag_config,
-        )
+        return self.chat_with_rag
 
 
-if __name__ == '__main__':
-    chat_model_name = "openchat:7b-v3.5-0106"
-    chat_model_config = ChatModelSettings(model_path=chat_model_name)
-    chat_model = ChatModel(model_config=chat_model_config)
+if __name__ == "__main__":
+    chat_with_rag_factory = ChatWithRAGFactory(
+        chat_model_name="openchat:7b-v3.5-0106",
+        embedding_model_name="/home/ke/person/models/bge-large-zh-v1.5",
+        search_method="similarity",
+        nearest_neighbors_count=5,
+    )
+    chat_with_rag = chat_with_rag_factory.create_chat_with_rag()
 
-    embedding_model_name = "/home/ke/person/models/bge-large-zh-v1.5"
-    vector_db_config = VectorDatabaseConfig(embedding_model_path=embedding_model_name)
-    search_type = SearchParameters(search_method="similarity", nearest_neighbors_count=5)
-    vector_model = VectorModel(vector_db_config, search_type)
-    rag_config = ChatWithRAGModelConfiguration(search_config=search_type, vector_db_config=vector_db_config)
-
-    # 创建并使用 ChatWithRAG 对象
-    chat_with_rag_creator = CreateChatWithRAG(chat_model=chat_model, vector_model=vector_model,
-                                              chat_with_rag_config=rag_config)
-    chat_with_rag = chat_with_rag_creator.create_chat_with_rag()
-
-    # response1 = chat_with_rag.single_chat_with_rag("探亲旅费报销规定是什么？")
+    # response1 = chat_with_rag._build_single_query_rag_chain("探亲旅费报销规定是什么？")
 
     # print(response1)
-    response2 = chat_with_rag.have_history_rag("探亲旅费报销规定是什么？")
+    response2 = chat_with_rag.process_conversational_rag("探亲旅费报销规定是什么？", "xiaoke_test1")
     print("____________________________")
 
     print(response2)
-    response3 = chat_with_rag.have_history_rag("具体一些！")
+    response3 = chat_with_rag.process_conversational_rag("具体一些！", "xiaoke_test1")
 
     print("____________________________")
     print(response3)
