@@ -20,7 +20,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 from ctr_vector_db import VectorDatabase
-from model import VectorDatabaseConfig, ChatModelSettings, SearchParameters, ChatWithRAGModelConfiguration
+from model import MilvusConfig, ChatModelSettings, SearchParameters, ChatWithRAGModelConfiguration
 
 from langchain.chains import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -34,7 +34,7 @@ class ChatModel:
 
 
 class VectorModel:
-    def __init__(self, vector_db_config: VectorDatabaseConfig, search_type: SearchParameters):
+    def __init__(self, vector_db_config: MilvusConfig, search_type: SearchParameters):
         self.embeddings = HuggingFaceEmbeddings(model_name=vector_db_config.embedding_model_path)
         self.milvus_store = VectorDatabase(vector_db_config)
         self.retriever = self.milvus_store.vector_db.as_retriever(
@@ -80,7 +80,7 @@ class ChatWithRAG:
 
         有帮助的中文答案："""
 
-        formatter = lambda docs: "\n\n".join(doc.page_content for doc in docs)
+        formatter = lambda docs: "\n\n".join(doc for doc in docs)
         custom_rag_prompt = PromptTemplate.from_template(context_template)
 
         rag_chain = (
@@ -143,6 +143,10 @@ class ChatWithRAG:
         )
 
         response = conversational_rag_chain.invoke({"input": query}, {"configurable": {"session_id": session_id}})
+        print("history:________________________________________________________")
+        print(response)
+        print("history:________________________________________________________")
+
         return response["answer"]
 
 
@@ -157,7 +161,7 @@ class ChatWithRAGFactory:
         chat_model_config = ChatModelSettings(model_path=chat_model_name)
         chat_model = ChatModel(model_config=chat_model_config)
 
-        vector_db_config = VectorDatabaseConfig(embedding_model_path=embedding_model_name)
+        vector_db_config = MilvusConfig(embedding_model_path=embedding_model_name)
         search_type = SearchParameters(search_method=search_method, nearest_neighbors_count=nearest_neighbors_count)
         vector_model = VectorModel(vector_db_config, search_type)
         rag_config = ChatWithRAGModelConfiguration(search_config=search_type, vector_db_config=vector_db_config)

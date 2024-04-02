@@ -13,11 +13,11 @@ from langchain_community.vectorstores import Milvus
 
 from pdf_split import PDFSplitAgent
 
-from model import VectorDatabaseConfig
+from model import MilvusConfig
 
 
 class VectorDatabase:
-    def __init__(self, model: VectorDatabaseConfig):
+    def __init__(self, model: MilvusConfig):
         self.model = model
         self.file_path = model.file_path
         self.embeddings = HuggingFaceEmbeddings(model_name=model.embedding_model_path)
@@ -77,7 +77,7 @@ class VectorDatabase:
 if __name__ == '__main__':
     em_model_path = "/home/ke/person/models/bge-large-zh-v1.5"
     file_path = "./data/浙大城市学院财务报销办事指南.pdf"
-    config = VectorDatabaseConfig(
+    config = MilvusConfig(
         # file_path=file_path,
         embedding_model_path=em_model_path,
         collection_name="LangChainCollection",

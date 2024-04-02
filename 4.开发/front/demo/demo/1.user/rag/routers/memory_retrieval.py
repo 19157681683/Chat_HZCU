@@ -5,7 +5,8 @@ from langchain_community.vectorstores.milvus import Milvus
 from starlette import status
 
 from .memory_retrieval_module import get_milvus, save_and_split_pdf
-from .chat_retrieval_module import get_ollama, ChatWithRAG
+from .chat_retrieval_module import get_ollama
+from .serve_module import ChatWithRAG
 
 memory_retrieval_router = APIRouter()
 
