@@ -24,3 +24,5 @@ class MilvusConfig(BaseModel):
     partition_names: Optional[List[str]] = Field(None, description="分区名称列表")
     replica_number: int = Field(1, description="副本数量")
     timeout: Optional[float] = Field(10, description="超时时间")
+
+

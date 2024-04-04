@@ -95,5 +95,5 @@ class ChatWithRAG:
         )
 
         response = conversational_rag_chain.invoke({"input": query}, {"configurable": {"session_id": session_id}})
-        pprint(response)
+        pprint(response["context"])
         return response["answer"]

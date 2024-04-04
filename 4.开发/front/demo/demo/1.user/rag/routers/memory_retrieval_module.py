@@ -15,7 +15,6 @@ def get_milvus() -> Milvus:
 
 
 async def save_and_split_pdf(file: UploadFile) -> List[Document]:
-    # 确保上传文件的目录存在
     upload_directory = os.path.join(".", "data", "other")
     os.makedirs(upload_directory, exist_ok=True)
 
