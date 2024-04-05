@@ -7,6 +7,3 @@
 
 @description = 导入模块
 """
-from .chat_with_rag import ChatWithRAG
-from .pdf_split import PDFSplitAgent
-from .ctr_vector_db import CtrINVectorDB
