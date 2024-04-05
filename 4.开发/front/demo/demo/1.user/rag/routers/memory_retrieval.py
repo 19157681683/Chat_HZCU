@@ -1,13 +1,13 @@
 import time
-from typing import Annotated
 
-from fastapi import APIRouter, UploadFile, Depends, HTTPException, Cookie, Request
+from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from langchain_community.vectorstores.milvus import Milvus
 from starlette import status
 
-from .memory_retrieval_module import get_milvus, save_and_split_pdf
 from .chat_retrieval_module import model_factory
+from .memory_retrieval_module import save_and_split_pdf
 from .serve_module import ChatWithRAG
+from .dep import get_milvus
 
 memory_retrieval_router = APIRouter()
 

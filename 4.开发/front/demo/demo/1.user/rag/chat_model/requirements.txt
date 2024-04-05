@@ -1,7 +1,0 @@
-transformers
-torch
-torchvision
-bitsandbytes
-fastapi
-uvicorn
-pydantic

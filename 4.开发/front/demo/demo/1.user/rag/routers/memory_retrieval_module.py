@@ -8,11 +8,6 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Milvus
 
 
-def get_milvus() -> Milvus:
-    return Milvus(
-        embedding_function=HuggingFaceEmbeddings(model_name="/home/ke/person/models/bge-large-zh-v1.5"),
-    )
-
 
 async def save_and_split_pdf(file: UploadFile) -> List[Document]:
     upload_directory = os.path.join(".", "data", "other")

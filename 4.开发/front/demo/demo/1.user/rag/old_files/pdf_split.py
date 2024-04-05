@@ -67,6 +67,6 @@ class PDFSplitAgent:
 
 if __name__ == '__main__':
     P = PDFSplitAgent(
-        pdf_path="/home/ke/pythonProject/Chat_HZCU/4.开发/front/demo/demo/1.user/rag/data/浙大城市学院财务报销办事指南.pdf")
+        pdf_path="/4.开发/front/demo/demo/1.user/rag/data/浙大城市学院财务报销办事指南.pdf")
     for i in P.split_agent_pdf():
         print(i.page_content)

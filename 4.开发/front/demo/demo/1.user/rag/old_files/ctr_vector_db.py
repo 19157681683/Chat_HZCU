@@ -76,7 +76,7 @@ class VectorDatabase:
 
 if __name__ == '__main__':
     em_model_path = "/home/ke/person/models/bge-large-zh-v1.5"
-    file_path = "./data/浙大城市学院财务报销办事指南.pdf"
+    file_path = "../data/浙大城市学院财务报销办事指南.pdf"
     config = MilvusConfig(
         # file_path=file_path,
         embedding_model_path=em_model_path,
