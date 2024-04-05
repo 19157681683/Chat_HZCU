@@ -1,3 +1,12 @@
+# encoding: UTF-8
+
+"""
+@author: 李秀奇
+@email: lixiuqixiaoke@qq.com
+@create_time: 2024/4/5 14:32
+
+
+"""
 from typing import Optional, List, Dict, Any
 
 from pydantic import BaseModel, Field
