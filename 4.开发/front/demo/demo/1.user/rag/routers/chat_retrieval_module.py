@@ -21,7 +21,7 @@ from requests import request
 
 
 def get_ollama():
-    return ChatOllama(model="qwen:7b-chat-v1.5-q4_K_M")
+    return ChatOllama(model="cas/minicpm-3b-openhermes-2.5-v2:latest")
 
 
 def get_baichuan():

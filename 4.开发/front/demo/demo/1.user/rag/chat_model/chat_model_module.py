@@ -5,19 +5,19 @@
 @email = lixiuqixiaoke@qq.com
 @create_time = 2024/4/4 17：51
 """
-import copy
-import warnings
+from pprint import pprint
 from threading import Thread
 from typing import List, Optional
-from models import ChatConfig
+
 import torch
-from langchain_community.chat_models.ollama import ChatOllama
 from transformers import (
     BitsAndBytesConfig,
     AutoModelForCausalLM,
     AutoTokenizer,
     TextIteratorStreamer,
 )
+
+from models import ChatConfig
 
 
 class QwenChat:
@@ -82,8 +82,8 @@ class QwenChat:
                 return _response_
             else:
                 _response_ = self._generate_response(messages, dict(generation_config))
-                print(messages)
-                print(_response_)
+                pprint(messages)
+                pprint(_response_)
                 return _response_
         except Exception as e:
             print(e)
